@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+    <link rel="stylesheet" href="/style.css">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <style>
+        /* Simple styling for the chatbot */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #chatbox {
+            width: 300px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+        .message {
+            margin: 5px;
+        }
+        .user {
+            color: blue;
+            text-align: right;
+        }
+        .bot {
+            color: green;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="chatbox">
+        <div id="messages"></div>
+        <input type="text" id="userInput" placeholder="Type a message..." />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            // Get the user input
+            const userMessage = document.getElementById('userInput').value;
+            const messagesDiv = document.getElementById('messages');
+
+            // Display the user's message in the chatbox
+            messagesDiv.innerHTML += `<div class="message user">${userMessage}</div>`;
+
+            // Clear the input field
+            document.getElementById('userInput').value = '';
+
+            // Send the user message to the Flask API
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: userMessage })
+            });
+
+            const data = await response.json();
+
+            // Display the chatbot's response
+            messagesDiv.innerHTML += `<div class="message bot">${data.answer}</div>`;
+        }
+    </script>
+
+</body>
+</html>
